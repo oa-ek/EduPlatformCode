@@ -6,33 +6,30 @@ using EduCodePlatform.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddControllersWithViews();
-
-// ГђГҐВєГ±ГІГ°ГіВєГ¬Г® ГЄГ®Г­ГІГҐГЄГ±ГІ ГЎГ Г§ГЁ Г¤Г Г­ГЁГµ123123123
+// 1. DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. Identity Г§ Г°Г®Г«ГїГ¬ГЁ
+// 2. Identity з ролями
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;
 })
-.AddRoles<IdentityRole>() // <-- Г„Г®Г¤Г ВєГ¬Г® ГЇВіГ¤ГІГ°ГЁГ¬ГЄГі Г°Г®Г«ГҐГ©
+.AddRoles<IdentityRole>() // <-- Додаємо підтримку ролей
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // 3. Razor Pages + MVC
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-// 4. Г‘ГҐГ°ГўВіГ± Г¤Г«Гї ГЇГҐГ°ГҐГўВіГ°ГЄГЁ ГЄГ®Г¤Гі (AngleSharp, ExCSS, Jint)
+// 4. Сервіс для перевірки коду (AngleSharp, ExCSS, Jint)
 builder.Services.AddScoped<CodeCheckService>();
 
-// Г’ВіГ«ГјГЄГЁ ГІГҐГЇГҐГ° ГЎГіГ¤ГіВєГ¬Г® app
+// Тільки тепер будуємо app
 var app = builder.Build();
 
-// Г‚ГЁГЄГ«ГЁГЄГ ВєГ¬Г® Г¬ГҐГІГ®Г¤ГЁ, ГїГЄВі ГўГЁГ¬Г ГЈГ ГѕГІГј ГЈГ®ГІГ®ГўГ®ГЈГ® app
+// Викликаємо методи, які вимагають готового app
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
